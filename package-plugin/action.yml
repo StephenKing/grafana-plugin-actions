@@ -114,7 +114,15 @@ runs:
       env:
         GRAFANA_ACCESS_POLICY_TOKEN: ${{ inputs.policy_token }}
         GRAFANA_API_KEY: ${{ inputs.grafana_token }}
-      if: ${{ inputs.policy_token != '' }}
+      if: ${{ inputs.policy_token != '' && secrets.SIGN_ROOT_URLS == '' }}
+
+    - name: Sign plugin with rootUrls
+      run: ${{ github.action_path }}/pm.sh sign -- --rootUrls ${{ secrets.GRAFANA_PLUGIN_SIGN_ROOT_URLS }}
+      shell: bash
+      env:
+        GRAFANA_ACCESS_POLICY_TOKEN: ${{ inputs.policy_token }}
+        GRAFANA_API_KEY: ${{ inputs.grafana_token }}
+      if: ${{ inputs.policy_token != '' && secrets.GRAFANA_PLUGIN_SIGN_ROOT_URLS != '' }}
 
     - name: Get plugin metadata
       id: metadata
